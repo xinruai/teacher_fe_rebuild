@@ -53,3 +53,11 @@ export function download(url: string, filename?: string): void {
   a.click()
   a.remove()
 }
+
+export const getFileExt = (fileName: string): string => {
+  const ext = fileName.substr(fileName.lastIndexOf('.') + 1).toLowerCase()
+  if (['ppt', 'exe', 'pdf', 'csv', 'xls', 'xlsx', 'docx', 'doc', 'zip', 'rar', 'jpg', 'png', 'svg', 'mp4', 'wma', 'avi', 'mov', 'mp3', 'gif', 'sql'].includes(ext)) {
+    return ext
+  }
+  return 'known'
+}

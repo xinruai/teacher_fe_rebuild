@@ -62,3 +62,11 @@ export function orderUpdateExam1(data: Record<string, unknown>) {
     data,
   })
 }
+
+export function getExamDetail(params: { courseId: string | number }) {
+  return request({
+    url: '/examOrder/getExamDetail',
+    method: 'get',
+    params,
+  })
+}

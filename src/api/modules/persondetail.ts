@@ -28,3 +28,11 @@ export function getHighScore() {
     method: 'get',
   })
 }
+
+export function getAliOSSUploadSign(params: { dir: string }) {
+  return request({
+    url: '/teacher/oss/getAliOSSUploadSign',
+    method: 'get',
+    params,
+  })
+}

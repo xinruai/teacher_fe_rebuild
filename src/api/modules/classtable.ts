@@ -48,3 +48,27 @@ export function getOrderStageList(params: { courseId: string | number }) {
     params,
   })
 }
+
+export function classRoomList(params: Record<string, unknown>) {
+  return request({
+    url: '/classRoom/list',
+    method: 'get',
+    params,
+  })
+}
+
+export function finishClassroom(data: { classroomId: number | string }) {
+  return request({
+    url: '/order/finishClassroom',
+    method: 'post',
+    data,
+  })
+}
+
+export function presenterTime(data: { classroomId: number | string; time: number | string; explain: string }) {
+  return request({
+    url: '/account/presenterTime',
+    method: 'post',
+    data,
+  })
+}

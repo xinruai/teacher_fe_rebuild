@@ -54,3 +54,11 @@ export function getAliOSSUploadSign(url: string) {
     method: 'get',
   })
 }
+
+export function readNotice(data: { id: string | number }) {
+  return request({
+    url: '/paper/readNotice',
+    method: 'post',
+    data,
+  })
+}

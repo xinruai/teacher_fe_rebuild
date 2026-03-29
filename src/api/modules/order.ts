@@ -135,3 +135,57 @@ export function queryEnrollmentOrders(params: { teacId: string | number }) {
     params,
   })
 }
+
+export function getComplatedOrder(params: Record<string, unknown>) {
+  return request({
+    url: '/order/getComplatedOrder',
+    method: 'get',
+    params,
+  })
+}
+
+export function doOrderListFlag() {
+  return request({
+    url: '/order/doOrderListFlag',
+    method: 'post',
+  })
+}
+
+export function getTaskList(params: { courseId: string | number }) {
+  return request({
+    url: '/order/getTaskList',
+    method: 'get',
+    params,
+  })
+}
+
+export function uploadTaskfeedBack(data: { taskId: string | number; name: string; url: string }) {
+  return request({
+    url: '/order/uploadTaskfeedBack',
+    method: 'post',
+    data,
+  })
+}
+
+export function deleteTaskfeedBack(data: { id: string | number }) {
+  return request({
+    url: '/order/deleteTaskfeedBack',
+    method: 'post',
+    data,
+  })
+}
+
+export function createOrUpdateTaskFeedback(data: Record<string, unknown>) {
+  return request({
+    url: '/order/createOrUpdateTaskFeedback',
+    method: 'post',
+    data,
+  })
+}
+
+export function getOrderTypeIntroduceVideo() {
+  return request({
+    url: '/order/getOrderTypeIntroduceVideo',
+    method: 'get',
+  })
+}
