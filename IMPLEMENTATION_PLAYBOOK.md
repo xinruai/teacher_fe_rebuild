@@ -32,6 +32,8 @@
 - [ ] Phase 4: Medium Complexity Views (in progress)
   - [x] 4.1 newSalary — 13 files migrated (index + cfg + 11 components), API module (13 endpoints), common.ts utils, stub deps
   - [x] 4.2 schooltimetable — 5 files migrated (cards + addcourse + coursedetail + changeModal + settingTimeTip), ClassCalendarApp expanded, API additions (classtable 6 fns, order 5 fns, preExam 5 fns, paper 2 fns, persondetail 1 fn), addNeedNew stub, checkexe util
+  - [x] 4.3 orders/orderList — 24 files migrated, handsUp case-fix
+  - [x] 4.4 myorders — 20 files migrated (myorderNew, myCourse, onCourse, finishedCourse, complatedOrder, examCheckModelNew, testmsgForm, uploadExamCheck, examInfo, playVideo, myOrderNewTip, fileList, uploadFile, uploader, uploadBtn, uploadfile, uploadFbAndEndClass, deletFeedBack, marquee, cfg), API additions (order 7 fns, examOrder 1 fn, paper 1 fn, persondetail 1 fn, classtable 3 fns), orderdetialVEnum util, getFileExt util, moneyDetail stub
 - [ ] Phase 5: Complex Views
 - [ ] Phase 6: Polish
 

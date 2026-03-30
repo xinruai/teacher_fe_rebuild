@@ -36,3 +36,11 @@ export function getAliOSSUploadSign(params: { dir: string }) {
     params,
   })
 }
+
+export function doFollowExtFlag(data: { filed: string }) {
+  return request({
+    url: '/teacher/doFollowExtFlag',
+    method: 'post',
+    data,
+  })
+}
