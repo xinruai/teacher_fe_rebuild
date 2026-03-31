@@ -1,24 +1,24 @@
 import { defineStore } from 'pinia'
 
-// Static image imports (replacing require())
-import doc1Img from '@/assets/images/newTrain/doc1.png'
-import doc2Img from '@/assets/images/newTrain/doc2.png'
-import doc3Img from '@/assets/images/newTrain/doc3.png'
-import withdrawalTimeImg from '@/assets/images/newTrain/withdrawal-time.png'
-import payrollImg from '@/assets/images/newTrain/payroll.png'
-import accountOverviewImg from '@/assets/images/newTrain/account-overview.png'
-import orderPoolImg from '@/assets/images/newTrain/order-pool.png'
-import myOrderImg from '@/assets/images/newTrain/my-order.png'
-import classroomScheduleImg from '@/assets/images/newTrain/classroom-schedule.png'
-import cloudDocImg from '@/assets/images/newTrain/cloud-document-preparation.png'
-import editTemplateImg from '@/assets/images/newTrain/edit-template.png'
-import startLessonImg from '@/assets/images/newTrain/start-lesson-preparation.png'
-import uploadImg from '@/assets/images/newTrain/upload.png'
-import helpCenterImg from '@/assets/images/newTrain/help-center.png'
-import teacherFunctionImg from '@/assets/images/newTrain/teacher-function.png'
-import payroll1Img from '@/assets/images/newTrain/payroll1.png'
-import payroll2Img from '@/assets/images/newTrain/payroll2.png'
-import payroll3Img from '@/assets/images/newTrain/payroll3.png'
+const trainImgBase = 'https://classbro-oss.oss-accelerate.aliyuncs.com/statice-resource/trainVideos'
+const doc1Img = `${trainImgBase}/doc1.png`
+const doc2Img = `${trainImgBase}/doc2.png`
+const doc3Img = `${trainImgBase}/doc3.png`
+const withdrawalTimeImg = `${trainImgBase}/withdrawal-time.png`
+const payrollImg = `${trainImgBase}/payroll.png`
+const accountOverviewImg = `${trainImgBase}/account-overview.png`
+const orderPool1Img = `${trainImgBase}/order-pool1.png`
+const orderPool2Img = `${trainImgBase}/order-pool2.png`
+const redLineImg = `${trainImgBase}/red-line.png`
+const myOrderImg = `${trainImgBase}/my-order.png`
+const classroomScheduleImg = `${trainImgBase}/classroom-schedule.png`
+const cloudDocImg = `${trainImgBase}/cloud-document-preparation.png`
+const editTemplateImg = `${trainImgBase}/edit-template.png`
+const startLessonImg = `${trainImgBase}/start-lesson-preparation.png`
+const uploadImg = `${trainImgBase}/upload.png`
+const payroll1Img = `${trainImgBase}/payroll1.png`
+const payroll2Img = `${trainImgBase}/payroll2.png`
+const payroll3Img = `${trainImgBase}/payroll3.png`
 
 interface ContentItem {
   type: string
@@ -102,50 +102,47 @@ export const useNewTrainStore = defineStore('newTrain', {
         pages: [
           {
             contents: [
-              { type: 'list', data: '2.1.抢单池功能' },
-              { type: 'list-item', data: '1. 系统会根据讲师的专业信息自动推送订单' },
-              { type: 'image', data: orderPoolImg, height: '209px' },
-              { type: 'list-item', data: '2. 讲师可点击订单号查看详细信息，自由挑选订单，确认后点击<b>【抢】</b>' },
-              { type: 'list-item', data: '3. 部分订单暂未开放直接抢单的权限，讲师可点击<b>【报】</b>进行报名，或复制单号联系对应运营询问 ' },
-              { type: 'list-item', data: '4. 抢单前可关注"<b>订单标签</b>"，"<b>预计收入</b>"，并点击<b>订单号</b>查看详情，确认<b>学生的辅导需求</b>与<b>可排课时间</b>是否匹配 ' },
+              { type: 'list', data: '2.1 接单流程' },
+              { type: 'list-item', data: '1. 接单主要包含两种场景：<b>抢单池</b>与<b>接单池</b>。' },
+              { type: 'list-item-type', data: '抢单池：讲师根据信息自主选择订单，确认后点击<b>【抢单】</b>。' },
+              { type: 'image', data: orderPool1Img, height: '209px' },
+              { type: 'list-item-type', data: '接单池：系统根据讲师画像/排班自动推送订单，收到后及时处理。' },
+              { type: 'image', data: orderPool2Img, height: '78px' },
+              { type: 'list-item', data: '2. 接单前请重点核对订单标签、预估收益、学员需求和可排课时间。' },
             ],
             viewed: false,
           },
           {
             contents: [
-              { type: 'list', data: '2.2 日常工作步骤-备课-备课中心（讲师帮助中心指引界面）' },
-              { type: 'list-item', data: '1. 进入订单的备课中心界面' },
+              { type: 'list', data: '2.2 抢单池规则与红线' },
+              { type: 'list-item', data: '1. 每一次抢单/报名，都是对学生的一份教学承诺。' },
+              { type: 'list-item', data: '2. 严禁随意吐单；非特殊原因取消已接订单会触发红线处罚。' },
+              { type: 'list-item', data: '3. 接单后请按订单首课时间及时与学生完成约课，确保按时履约。' },
+              { type: 'image', data: redLineImg, height: '106px' },
+            ],
+            viewed: false,
+          },
+          {
+            contents: [
+              { type: 'list', data: '2.3 日常工作步骤-备课-备课中心（讲师帮助中心指引界面）' },
+              { type: 'list-item', data: '1. 进入订单的备课中心界面。' },
               { type: 'image', data: myOrderImg, height: '195px' },
-              { type: 'list-item', data: '2. 点击右侧【创建课堂】排课，从左侧【课堂表】下方进入上课教室' },
+              { type: 'list-item', data: '2. 点击右侧【创建课堂】排课，从左侧【课堂表】下方进入上课教室。' },
               { type: 'image', data: classroomScheduleImg, height: '188px' },
             ],
             viewed: false,
           },
           {
             contents: [
-              { type: 'list-item', data: '3. 进入右侧【云文档备课】' },
+              { type: 'list', data: '2.4 日常工作步骤-备课材料准备' },
+              { type: 'list-item', data: '1. 进入右侧【云文档备课】。' },
               { type: 'image', data: cloudDocImg, height: '239px' },
-              { type: 'list-item', data: '4. 点击【编辑模板】' },
+              { type: 'list-item', data: '2. 点击【编辑模板】。' },
               { type: 'image', data: editTemplateImg, height: '178px' },
-            ],
-            viewed: false,
-          },
-          {
-            contents: [
-              { type: 'list-item', data: '5. 选中模板，开始备课' },
+              { type: 'list-item', data: '3. 选中模板，开始备课。' },
               { type: 'image', data: startLessonImg, height: '210px' },
-              { type: 'list-item', data: '6. 选中备课课件，上传至课堂' },
+              { type: 'list-item', data: '4. 选中备课课件，上传至课堂。' },
               { type: 'image', data: uploadImg, height: '212px' },
-            ],
-            viewed: false,
-          },
-          {
-            contents: [
-              { type: 'list', data: '2.3  日常工作步骤-授课-课堂模拟（讲师帮助中心指引界面）' },
-              { type: 'list-item', data: '1. 在【讲师帮助中心】找到课堂模拟功能' },
-              { type: 'image', data: helpCenterImg, height: '163px' },
-              { type: 'list-item', data: '2. 常用教室功能（请讲师保存该图片）' },
-              { type: 'image', data: teacherFunctionImg, height: '227px' },
             ],
             viewed: false,
           },

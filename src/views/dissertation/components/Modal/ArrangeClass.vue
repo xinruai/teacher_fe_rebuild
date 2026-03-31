@@ -11,7 +11,7 @@ import {
 } from '@/api/modules/paper'
 
 const dissertationStore = useDissertationStore()
-const { overtimeTips, checkArrearsOrder } = useAddCourse()
+const { overList, beijingTime, checkArrearsOrder, getBeiJinTime } = useAddCourse()
 
 const visible = ref(false)
 const mode = ref<'add' | 'edit'>('add')
@@ -23,21 +23,45 @@ const courseIdVal = ref<string | number>('')
 const name = ref('')
 const dateStart = ref('')
 const startTime = ref('')
-const hour = ref(1)
-const minute = ref(0)
+const hour = ref('')
+const minute = ref('')
 const description = ref('')
+const minstartTime = ref('')
 
-const hourOptions = Array.from({ length: 5 }, (_, i) => i + 1)
-const minuteOptions = [0, 10, 20, 30, 40, 50]
+const hourOptions = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'))
+const minuteOptions = ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55']
 
 const endTime = computed(() => {
   if (!dateStart.value || !startTime.value) return ''
   const start = dayjs(`${dateStart.value} ${startTime.value}`)
-  return start.add(hour.value, 'hour').add(minute.value, 'minute').format('HH:mm')
+  return start
+    .add(Number(hour.value || 0), 'hour')
+    .add(Number(minute.value || 0), 'minute')
+    .format('YYYY-MM-DD HH:mm')
+})
+
+const overtimeTips = computed(() => {
+  if (!overList.value.length) return ''
+  return `您当前存在 ${overList.value.length} 个未处理欠费订单，请先联系运营确认后再安排新课。`
 })
 
 const disabledDate = (date: Date) => {
-  return dayjs(date).isBefore(dayjs(), 'day')
+  return dayjs(date).isBefore(dayjs(beijingTime.value), 'day')
+}
+
+function getNowHour() {
+  const t = dayjs(beijingTime.value)
+  minstartTime.value = t.format('HH:mm')
+  startTime.value = minstartTime.value
+}
+
+function onDateChange() {
+  const nowDay = dayjs(beijingTime.value).format('YYYY-MM-DD')
+  if (dateStart.value === nowDay) {
+    getNowHour()
+  } else {
+    minstartTime.value = ''
+  }
 }
 
 async function show(params: {
@@ -56,15 +80,16 @@ async function show(params: {
   courseIdVal.value = params.courseId || ''
   dateStart.value = ''
   startTime.value = ''
-  hour.value = 1
-  minute.value = 0
+  hour.value = ''
+  minute.value = ''
   description.value = ''
 
   await checkArrearsOrder(courseIdVal.value)
+  await getBeiJinTime()
 
   if (params.mode === 'edit' && params.classroomId) {
     try {
-      const res = await dissertation_findClassroomInfo(params.classroomId)
+      const res = await dissertation_findClassroomInfo(params.classroomId, { flag: 1 })
       if (res.status === 200 && res.body) {
         const info = res.body
         dateStart.value = dayjs(info.startTime).format('YYYY-MM-DD')
@@ -73,8 +98,8 @@ async function show(params: {
         const start = dayjs(info.startTime)
         const end = dayjs(info.endTime)
         const diff = end.diff(start, 'minute')
-        hour.value = Math.floor(diff / 60)
-        minute.value = diff % 60
+        hour.value = String(Math.floor(diff / 60)).padStart(2, '0')
+        minute.value = String(diff % 60).padStart(2, '0')
       }
     } catch { /* ignore */ }
   }
@@ -91,11 +116,19 @@ async function submit() {
     ElMessage.warning('请选择上课时间')
     return
   }
+  if (!hour.value) {
+    ElMessage.warning('请选择课程小时')
+    return
+  }
+  if (!minute.value) {
+    ElMessage.warning('请选择课程分钟')
+    return
+  }
 
   const startDateTime = `${dateStart.value} ${startTime.value}`
   const endDateTime = dayjs(startDateTime)
-    .add(hour.value, 'hour')
-    .add(minute.value, 'minute')
+    .add(Number(hour.value), 'hour')
+    .add(Number(minute.value), 'minute')
     .format('YYYY-MM-DD HH:mm')
 
   if (mode.value === 'add') {
@@ -136,7 +169,7 @@ defineExpose({ show })
     :close-on-click-modal="false"
   >
     <div v-if="overtimeTips" class="overtime-tips">{{ overtimeTips }}</div>
-    <el-form label-width="100px">
+    <el-form v-else label-width="100px">
       <el-form-item label="课堂名称">
         <el-input v-model="name" disabled />
       </el-form-item>
@@ -147,6 +180,7 @@ defineExpose({ show })
           placeholder="选择日期"
           value-format="YYYY-MM-DD"
           :disabled-date="disabledDate"
+          @change="onDateChange"
         />
       </el-form-item>
       <el-form-item label="上课时间">
@@ -155,6 +189,7 @@ defineExpose({ show })
           start="00:00"
           step="00:10"
           end="24:00"
+          :min-time="minstartTime"
           placeholder="选择时间"
         />
       </el-form-item>

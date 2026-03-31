@@ -4,6 +4,8 @@ import { StageClassesType } from '@/constants/enums'
 import { ClassFileType2Val } from '../../cfg/Table'
 import MaterialListModal from '../Modal/MaterialList.vue'
 import MaterialUploadModal from '../Modal/Upload/index.vue'
+import { storeToRefs } from 'pinia'
+import { useDissertationStore } from '@/stores/dissertation'
 
 const props = defineProps<{
   data: any
@@ -13,26 +15,38 @@ const props = defineProps<{
 
 const materialListRef = ref<InstanceType<typeof MaterialListModal>>()
 const materialUploadRef = ref<InstanceType<typeof MaterialUploadModal>>()
+const dissertationStore = useDissertationStore()
+const { readonly: isReadonly } = storeToRefs(dissertationStore)
 
 const isDissertation = computed(() => props.data.type === StageClassesType.DISSERTATION)
 
 const fileTypes = computed(() => {
   if (!props.data.teacherFilsValue) return []
-  return props.data.teacherFilsValue
+  if (Array.isArray(props.data.teacherFilsValue)) return props.data.teacherFilsValue
+  return String(props.data.teacherFilsValue)
+    .split(',')
+    .map((item) => Number(item))
+    .filter((item) => item > 0)
 })
 
+const canRead = computed(() => Array.isArray(props.data.teacherFiles) && props.data.teacherFiles.length > 0)
+
 function lookUp() {
+  const courseId = props.data.courseId || dissertationStore.courseId
+  if (!courseId) return
   materialListRef.value?.show({
-    courseId: props.data.courseId,
+    courseId,
     stageClassId: props.data.id,
   })
 }
 
 function openUpload(stageClassFileType?: number) {
+  const courseId = props.data.courseId || dissertationStore.courseId
+  if (!courseId) return
   materialUploadRef.value?.show({
     stageId: props.stageId,
     stageClassId: props.data.id,
-    courseId: props.data.courseId,
+    courseId,
     stageClassFileType,
     isDissertation: isDissertation.value,
   })
@@ -44,16 +58,16 @@ function openUpload(stageClassFileType?: number) {
     <template v-if="fileTypes.length > 1">
       <div v-for="ft in fileTypes" :key="ft" class="g-material__item">
         <span class="g-material__label">{{ ClassFileType2Val[ft] || '' }}</span>
-        <el-button size="small" link type="primary" @click="openUpload(ft)">上传文件</el-button>
+        <el-button size="small" link type="primary" :disabled="isReadonly" @click="openUpload(ft)">上传文件</el-button>
       </div>
     </template>
     <template v-else-if="fileTypes.length === 1">
-      <el-button size="small" link type="primary" @click="openUpload(fileTypes[0])">上传文件</el-button>
+      <el-button size="small" link type="primary" :disabled="isReadonly" @click="openUpload(fileTypes[0])">上传文件</el-button>
     </template>
     <template v-else>
-      <el-button size="small" link type="primary" @click="openUpload()">上传文件</el-button>
+      <el-button size="small" link type="primary" :disabled="isReadonly" @click="openUpload()">上传文件</el-button>
     </template>
-    <el-button size="small" link type="primary" @click="lookUp">查看文件</el-button>
+    <el-button size="small" link type="primary" :disabled="!canRead" @click="lookUp">查看文件</el-button>
     <span v-if="isDissertation" class="g-material__tip">*必论文修改需上传</span>
     <MaterialListModal ref="materialListRef" />
     <MaterialUploadModal ref="materialUploadRef" />

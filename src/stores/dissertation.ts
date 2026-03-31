@@ -21,6 +21,20 @@ function cacheIdAndStatus({ courseId, readonly }: { courseId: string | number; r
   localStorage.setItem(Storage.READ_ONLY, JSON.stringify(readonly))
 }
 
+function setCrmFlags({ crm, newCrm = false }: { crm: boolean; newCrm?: boolean }) {
+  if (crm) {
+    localStorage.setItem(Storage.CRM_LINK_DISS, '1')
+    if (newCrm) {
+      localStorage.setItem(Storage.NEW_LINK_DISS, '1')
+    } else {
+      localStorage.removeItem(Storage.NEW_LINK_DISS)
+    }
+    return
+  }
+  localStorage.removeItem(Storage.CRM_LINK_DISS)
+  localStorage.removeItem(Storage.NEW_LINK_DISS)
+}
+
 function getReadonly(): boolean {
   return JSON.parse(localStorage.getItem(Storage.READ_ONLY) || 'false')
 }
@@ -88,7 +102,7 @@ export const useDissertationStore = defineStore('dissertation', {
           statused,
           rate,
         }
-        this.progressOver = [OVER, ERR_OVER].includes(+statused)
+        this.progressOver = ([OVER, ERR_OVER] as number[]).includes(+statused)
         this.rate = rate
       }
     },
@@ -96,6 +110,7 @@ export const useDissertationStore = defineStore('dissertation', {
       const { courseId, readonly } = data
       if (isNil(courseId) || isNil(readonly)) throw new Error('courseId or readonly is Nil')
       cacheIdAndStatus({ courseId, readonly })
+      setCrmFlags({ crm: false })
       const resolved = router.resolve({
         path: DissertationRouterPath.HOME,
         query: { courseId: String(courseId) },
@@ -107,6 +122,7 @@ export const useDissertationStore = defineStore('dissertation', {
       const { courseId } = data
       if (isNil(courseId)) throw new Error('courseId is Nil')
       cacheIdAndStatus({ courseId, readonly: true })
+      setCrmFlags({ crm: true })
       router.push(DissertationRouterPath.HOME)
     },
     async crmGotoPaperRouterPath(data: {
@@ -117,6 +133,7 @@ export const useDissertationStore = defineStore('dissertation', {
       const { courseId, isPermision, flag } = data
       if (isNil(courseId)) throw new Error('courseId is Nil')
       cacheIdAndStatus({ courseId, readonly: false })
+      setCrmFlags({ crm: true })
       const query = { courseId: String(courseId), isPermision: String(isPermision) }
       if (flag) {
         const resolved = router.resolve({ path: paperRouterPath.HOME, query })

@@ -14,6 +14,7 @@ const { progressOver, readonly: isReadonly } = storeToRefs(dissertationStore)
 
 const expanded = ref(true)
 const addClassRef = ref<InstanceType<typeof AddClassModal>>()
+const stageClasses = computed(() => props.data.stageClass || props.data.stageClassInstance || [])
 
 const canAdd = computed(() => {
   return !progressOver.value && props.data.statused !== StageStatus.TODO && !isReadonly.value
@@ -27,6 +28,7 @@ function openAddClass() {
   addClassRef.value?.show({
     stageType: props.data.stageType,
     courseId: props.data.courseId,
+    stageData: props.data,
   })
 }
 </script>
@@ -42,7 +44,7 @@ function openAddClass() {
     </div>
     <div v-show="expanded" class="g-table-section__right">
       <RightRow
-        v-for="cls in data.stageClass"
+        v-for="cls in stageClasses"
         :key="cls.id"
         :data="cls"
         :stage-type="data.stageType"

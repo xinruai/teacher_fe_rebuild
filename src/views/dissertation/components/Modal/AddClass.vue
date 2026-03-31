@@ -13,23 +13,36 @@ const courseIdVal = ref<string | number>('')
 const classType = ref<number | null>(null)
 const className = ref('')
 const remark = ref('')
+type ClassTypeOption = { classType: number; className?: string; label?: string }
+const classTypes = ref<ClassTypeOption[]>([])
 
 const classTypeOptions = computed(() => {
-  return StageType2ClassTypeListVal[stageType.value] || []
+  if (classTypes.value.length > 0) return classTypes.value
+  return (StageType2ClassTypeListVal[stageType.value] || []).map((item: any) => ({
+    classType: Number(item.classType),
+    label: item.label,
+  })) as ClassTypeOption[]
 })
 
-function show(params: { stageType: number; courseId: string | number }) {
+function show(params: { stageType: number; courseId: string | number; stageData?: any }) {
   stageType.value = params.stageType
   courseIdVal.value = params.courseId
-  classType.value = null
-  className.value = ''
+  const fromStage = (params.stageData?.stageClass || params.stageData?.stageClassInstance || []) as Array<any>
+  classTypes.value = fromStage.map((item) => ({
+    classType: Number(item.classType),
+    className: item.className,
+    label: item.label,
+  }))
+  const first = classTypeOptions.value[0]
+  classType.value = first?.classType ?? null
+  className.value = first?.className || first?.label || ''
   remark.value = ''
   visible.value = true
 }
 
 function onClassTypeChange(val: number) {
   const opt = classTypeOptions.value.find((o: any) => o.classType === val)
-  if (opt) className.value = opt.label
+  if (opt) className.value = opt.className || opt.label || ''
 }
 
 async function submit() {
@@ -65,7 +78,7 @@ defineExpose({ show })
           <el-option
             v-for="opt in classTypeOptions"
             :key="opt.classType"
-            :label="opt.label"
+            :label="opt.className || opt.label || ''"
             :value="opt.classType"
           />
         </el-select>

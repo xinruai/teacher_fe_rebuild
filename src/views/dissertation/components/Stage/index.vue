@@ -8,7 +8,7 @@ import { stage_sort } from '@/api/modules/paper'
 import Row from './Row.vue'
 
 const dissertationStore = useDissertationStore()
-const { stages, readonly: isReadonly } = storeToRefs(dissertationStore)
+const { stages, readonly: isReadonly, disabled: draggableDisabled } = storeToRefs(dissertationStore)
 
 const stageList = computed({
   get: () => stages.value as any[],
@@ -44,7 +44,7 @@ async function moveEnd(evt: any) {
       :animation="200"
       ghost-class="ghost"
       handle=".drag-handle"
-      :disabled="isReadonly"
+      :disabled="isReadonly || draggableDisabled"
       :move="onMoveCallback"
       @end="moveEnd"
     >
