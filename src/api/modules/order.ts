@@ -189,3 +189,11 @@ export function getOrderTypeIntroduceVideo() {
     method: 'get',
   })
 }
+
+export function isImportantOrder(params: { courseId: string | number }) {
+  return request({
+    url: '/order/isImportantOrder',
+    method: 'get',
+    params,
+  })
+}

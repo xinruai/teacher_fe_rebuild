@@ -33,6 +33,7 @@
   - [x] 4.1 newSalary — 13 files migrated (index + cfg + 11 components), API module (13 endpoints), common.ts utils, stub deps
   - [x] 4.2 schooltimetable — 5 files migrated (cards + addcourse + coursedetail + changeModal + settingTimeTip), ClassCalendarApp expanded, API additions (classtable 6 fns, order 5 fns, preExam 5 fns, paper 2 fns, persondetail 1 fn), addNeedNew stub, checkexe util
   - [x] 4.3 orders/orderList — 24 files migrated, handsUp case-fix
+    - [x] 4.3.1 rushAutoModal — updated for "important order" feature (isImportantOrder API, conditional UI for high-pay orders)
   - [x] 4.4 myorders — 20 files migrated (myorderNew, myCourse, onCourse, finishedCourse, complatedOrder, examCheckModelNew, testmsgForm, uploadExamCheck, examInfo, playVideo, myOrderNewTip, fileList, uploadFile, uploader, uploadBtn, uploadfile, uploadFbAndEndClass, deletFeedBack, marquee, cfg), API additions (order 7 fns, examOrder 1 fn, paper 1 fn, persondetail 1 fn, classtable 3 fns), orderdetialVEnum util, getFileExt util, moneyDetail stub
 - [ ] Phase 5: Complex Views
 - [ ] Phase 6: Polish
@@ -42,18 +43,18 @@
 ## Phase 1 Tasks
 
 ### 1.1 Utils — Auth (`src/utils/auth.ts`)
-**Source:** `classbro-teacher-web-vue/src/utils/auth.js`
+**Source:** `classbro-teacher-web-vue-master/src/utils/auth.js`
 **Action:** Direct port with TypeScript types
 - Token: js-cookie based (key: `vue_admin_template_token`)
 - Session/Local storage helpers
 - Raw cookie get/set/del functions
 
 ### 1.2 Utils — Page Title (`src/utils/get-page-title.ts`)
-**Source:** `classbro-teacher-web-vue/src/utils/get-page-title.js`
+**Source:** `classbro-teacher-web-vue-master/src/utils/get-page-title.js`
 **Action:** Direct port
 
 ### 1.3 Constants — VEnum (`src/constants/enums.ts`)
-**Source:** `classbro-teacher-web-vue/src/utils/VEnum.js`
+**Source:** `classbro-teacher-web-vue-master/src/utils/VEnum.js`
 **Action:** Convert all exports to TypeScript `as const` objects
 - CalendarModelType, HatchRouterPath, Storage, TaskState, ReturnCode
 - OwnClassStatus, StudentMakeClassStatus, AlertModalType, WishType
@@ -64,7 +65,7 @@
 - StageClassFileType, ClassUploadFileType, HeaderStatused, CrmRouterLinkArgs
 
 ### 1.4 API — Request Layer (`src/api/request.ts`)
-**Source:** `classbro-teacher-web-vue/src/utils/request.js`
+**Source:** `classbro-teacher-web-vue-master/src/utils/request.js`
 **Migration:**
 - `process.env.VUE_APP_BASE_API` → `import.meta.env.VITE_APP_BASE_API`
 - `MessageBox, Message` from element-ui → `ElMessageBox, ElMessage` from element-plus
@@ -73,7 +74,7 @@
 - Keep same interceptor logic: X-Token header, code 20000 success, 50008/50012/50014 token errors
 
 ### 1.5 API — Hatch Request Layer (`src/api/hatch-request.ts`)
-**Source:** `classbro-teacher-web-vue/src/views/hatch/api/request.js`
+**Source:** `classbro-teacher-web-vue-master/src/views/hatch/api/request.js`
 **Migration:**
 - Replace `Vue.prototype.$axios` with standalone axios instance
 - Remove `Vue` import entirely
@@ -130,7 +131,7 @@ Convert all 13+1 Vuex modules to Pinia stores:
     - Replace `require('@/assets/...')` with static imports or URL constructor
 
 ### 1.9 Utils — Task Utils Stub (`src/utils/task/Utils.ts`)
-**Source:** `classbro-teacher-web-vue/src/utils/task/Utils.js`
+**Source:** `classbro-teacher-web-vue-master/src/utils/task/Utils.js`
 **Action:** Create typed stub with exports used by hatch store:
 - `formatSeconds`, `clearCacheInterval`, `cacheIntervalId`, `getFmtCurrentLine`, `getTeacherInfo`
 
@@ -139,10 +140,10 @@ Convert all 13+1 Vuex modules to Pinia stores:
 
 ### 1.11 Router — Full Route Config (`src/router/`)
 **Source files:**
-- `classbro-teacher-web-vue/src/router/index.js`
-- `classbro-teacher-web-vue/src/router/hatch.js`
-- `classbro-teacher-web-vue/src/router/dissertation.js`
-- `classbro-teacher-web-vue/src/router/paperschedule.js`
+- `classbro-teacher-web-vue-master/src/router/index.js`
+- `classbro-teacher-web-vue-master/src/router/hatch.js`
+- `classbro-teacher-web-vue-master/src/router/dissertation.js`
+- `classbro-teacher-web-vue-master/src/router/paperschedule.js`
 **Action:**
 - Split into `src/router/modules/` files
 - Convert to Vue Router 4 syntax
@@ -150,11 +151,11 @@ Convert all 13+1 Vuex modules to Pinia stores:
 - Keep lazy loading pattern
 
 ### 1.12 Router — Guards (`src/router/guards.ts`)
-**Source:** `classbro-teacher-web-vue/src/permission.js` (if exists, otherwise infer)
+**Source:** `classbro-teacher-web-vue-master/src/permission.js` (if exists, otherwise infer)
 **Action:** Navigation guard with NProgress, token check, page title
 
 ### 1.13 Layout Shell (`src/layout/`)
-**Source:** `classbro-teacher-web-vue/src/layout/`
+**Source:** `classbro-teacher-web-vue-master/src/layout/`
 **Action:** Create layout with stubs:
 - `LayoutDefault.vue` — main layout wrapper
 - `components/AppMain.vue` — router-view wrapper
@@ -166,7 +167,7 @@ Convert all 13+1 Vuex modules to Pinia stores:
 - `components/Sidebar/Logo.vue`
 
 ### 1.14 Login Page (`src/views/login/index.vue`)
-**Source:** `classbro-teacher-web-vue/src/views/login/index.vue`
+**Source:** `classbro-teacher-web-vue-master/src/views/login/index.vue`
 **Action:** Migrate login form with Element Plus components
 
 ---
@@ -259,13 +260,13 @@ export const useFooStore = defineStore('foo', {
 **Already done:** 404.vue, redirect/index.vue (real implementations, not stubs)
 
 ### 3.1 login/index.vue
-**Source:** `classbro-teacher-web-vue/src/views/login/index.vue` (~369 lines)
+**Source:** `classbro-teacher-web-vue-master/src/views/login/index.vue` (~369 lines)
 **Dependencies:** `user` store, `user` API, `auth` utils, `HatchRouterPath` enum, `persondetail` API, static images
 **Key migrations:** `require()` images, `@keyup.enter.native`, `this.$store` → Pinia, Options → `<script setup>`
 **Priority:** First — unblocks all testing
 
 ### 3.2 messages/messages.vue
-**Source:** `classbro-teacher-web-vue/src/views/messages/messages.vue` (~148 lines)
+**Source:** `classbro-teacher-web-vue-master/src/views/messages/messages.vue` (~148 lines)
 **Dependencies:** table API (generic), `v-loading`
 **Key migrations:** `slot-scope` → `#default`, Element Plus table syntax
 **Priority:** Simplest real view, good pattern validation
@@ -346,10 +347,15 @@ export const useFooStore = defineStore('foo', {
 **Priority:** Smallest complex view, store and API already exist
 
 ### 5.2 newTrain/index.vue
-**Source:** 30 files (~6,343 lines)
-**Dependencies:** `newTrain` store (287 lines, real), `newTrain` API (stub), video playback
+**Source:** 30 files (~6,343 lines) — **USE NEW SOURCE: `classbro-teacher-web-vue-master`**
+**Dependencies:** `newTrain` store (265 lines, real), `newTrain` API (stub), video playback
 **Structure:** Step-based (step0-3, officiallyJoin, preJobTraining, productLearning)
 **Priority:** Store fully implemented, mostly display/step logic
+**⚠ Updated source files (vs old source):**
+- **newTrain store**: Section 2.1 renamed "抢单池功能"→"接单流程" (two order channels); new section 2.2 "抢单池" (usage guide + red-line rules); old section 2.3 "课堂模拟" removed. New images: `order-pool1.png`, `order-pool2.png`, `red-line.png`
+- **rushOrderTip.vue**: Complete redesign — old congratulations+benefits → "how to get rush order permissions" (data metrics + level promotion + growth-path diagram). New image: `growth-path.png`
+- **step2.vue**: Card-based file download (PPT/ZIP icons) replacing inline popover. New `downloadFile()`, `getFileList` API, `interviewFile1` data. New images: `ppt.png`, `zip.png`
+- **preJobTraining.vue**: Added `sub-message` template type (gray indented text)
 
 ### 5.3 paperchedule/index.vue
 **Source:** 22 files (~6,692 lines)

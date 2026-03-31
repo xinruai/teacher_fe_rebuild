@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
 import { titleEnum } from '@/views/orders/cfg'
-import { handRushOrder } from '@/api/modules/order'
+import { handRushOrder, isImportantOrder as isImportantOrderApi } from '@/api/modules/order'
 
 const router = useRouter()
 
@@ -11,6 +11,7 @@ const isShow = ref(false)
 const current = ref<any>({})
 const isKnow = ref(false)
 const loading = ref(false)
+const isImportant = ref(false)
 
 const isNewLastMinuteCramming = computed(() => current.value.examPrepStatus === 2)
 
@@ -18,9 +19,14 @@ const emit = defineEmits<{
   (e: 'refresh'): void
 }>()
 
-function show(row: any) {
+async function show(row: any) {
   isShow.value = true
   current.value = row
+  isImportant.value = false
+  const res = await isImportantOrderApi({ courseId: row.courseId })
+  if (res.status == 200) {
+    isImportant.value = res.body
+  }
 }
 
 function closeModal() {
@@ -65,12 +71,35 @@ defineExpose({ show, closeModal })
       @close="closeModal"
     >
       <div class="header-desc">为了避免处罚，讲师在抢单前，请务必确认以下内容</div>
-      <div class="warn-info">
+      <div class="warn-info" v-if="isImportant">
+        <div>
+          <i class="el-icon-warning"></i>
+          以下请确认无误后再抢单，若抢单后吐单，讲师抢单池权限将被调整，
+          <span>抢单优先级下降</span>。<br/>
+          如有任何疑问，请联系订单运营
+        </div>
+      </div>
+      <div class="warn-info" v-else>
         <span><i class="el-icon-warning"></i> 若抢单后又吐单</span>
         <div class="has-dot">公司将按该订单的预计收入<span>扣除账户内薪资</span></div>
         <div class="has-dot">讲师<span>抢单池权限</span>将被调整，抢单<span>优先级下降</span></div>
       </div>
-      <div class="content">
+      <div v-if="isImportant">
+        <div class="content">
+          <div class="item">
+            <div class="item-text">1. 高薪资订单</div>
+            <div class="item-desc">该订单每千字服务薪资由30G上调至40G，对应订单pass线将调整成60分。</div>
+          </div>
+          <div class="item">
+            <div class="item-text">2. 需进行终稿QC和修改</div>
+            <div class="item-desc">为帮助讲师顺利获得薪资，讲师需至少提前DDL2天，提交论文终稿进行自动QC，根据QC意见进行修改。</div>
+            <div style="font-weight: bold;">
+              <span style="color: #da5b54;">QC入口：</span>讲师空间-备课中心-订单论文规划表
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content" v-else>
         <div class="item">
           <div class="item-text">1. 个人能力匹配</div>
           <div class="item-desc">仔细阅读订单材料与需求，确保自身可胜任该辅导内容</div>
@@ -81,10 +110,13 @@ defineExpose({ show, closeModal })
         </div>
       </div>
       <div class="show-know-tip">
-        <p v-if="isNewLastMinuteCramming" class="new-last-minute-cramming">
-          此为【保Pass版】考前突击产品，请认真查阅协议
-          <i class="el-icon-bottom"></i><i class="el-icon-bottom"></i><i class="el-icon-bottom"></i>
-        </p>
+        <template v-if="!isImportant">
+          <p>如有任何疑问，请随时联系订单运营沟通确认。充分了解需求后再抢单，保障良好的授课体验。</p>
+          <p v-if="isNewLastMinuteCramming" class="new-last-minute-cramming">
+            此为【保Pass版】考前突击产品，请认真查阅协议
+            <i class="el-icon-bottom"></i><i class="el-icon-bottom"></i><i class="el-icon-bottom"></i>
+          </p>
+        </template>
         <el-checkbox v-model="isKnow" />
         <span>我同意遵守<span class="scheme-name" @click="goToScheme">{{ titleEnum[current.spoType] }}服务协议<i class="el-icon-top-right"></i></span></span>
       </div>
@@ -115,11 +147,13 @@ defineExpose({ show, closeModal })
   padding: 12px;
   border-radius: 12px;
   margin-top: 16px;
+  line-height: 22px;
+  color: #333;
+  .el-icon-warning {
+    color: #da5b54;
+  }
   span {
     color: #da5b54;
-    i {
-      color: inherit;
-    }
   }
   .has-dot {
     padding-left: 36px;
